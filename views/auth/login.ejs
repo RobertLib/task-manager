@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Simple task management" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="view-transition" content="same-origin" />
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="container" style="max-width: 452px">
+      <h1>Login</h1>
+
+      <form action="/login" class="panel" method="post" style="padding: 2rem">
+        <div style="display: flex; flex-direction: column; gap: 1.25rem">
+          <% if (errors.length > 0) { %>
+          <div class="alert alert-danger"><%= errors %></div>
+          <% } %>
+
+          <label>
+            E-mail: <span style="color: rgb(var(--danger-rgb))">*</span>
+            <input
+              autocomplete="email"
+              class="form-control form-control-lg"
+              name="email"
+              required
+              style="margin-top: 0.5rem; width: 100%"
+              type="email"
+            />
+          </label>
+          <label>
+            Password: <span style="color: rgb(var(--danger-rgb))">*</span>
+            <input
+              autocomplete="current-password"
+              class="form-control form-control-lg"
+              name="password"
+              required
+              style="margin-top: 0.5rem; width: 100%"
+              type="password"
+            />
+          </label>
+        </div>
+
+        <button
+          class="btn btn-primary btn-lg"
+          style="margin-top: 1.75rem; width: 100%"
+          type="submit"
+        >
+          Login
+        </button>
+
+        <p style="margin-bottom: 0; text-align: center">
+          or, <a href="/register">register</a>
+        </p>
+      </form>
+    </main>
+  </body>
+</html>
