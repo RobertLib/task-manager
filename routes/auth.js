@@ -7,12 +7,9 @@ const { tryCatch } = require("../utils/try-catch");
 const pool = require("../db");
 
 // View login
-router.get(
-  "/login",
-  tryCatch((req, res) => {
-    res.render("auth/login");
-  })
-);
+router.get("/login", (req, res) => {
+  res.render("auth/login");
+});
 
 // Login user
 router.post(
@@ -36,18 +33,20 @@ router.post(
       return res.redirect("/login");
     }
 
-    req.session.user = { id: user.id, email };
+    req.session.user = {
+      id: user.id,
+      email,
+      role: user.role,
+    };
+
     res.redirect("/");
   })
 );
 
 // View registration
-router.get(
-  "/register",
-  tryCatch((req, res) => {
-    res.render("auth/register");
-  })
-);
+router.get("/register", (req, res) => {
+  res.render("auth/register");
+});
 
 // Register user
 router.post(
@@ -80,7 +79,12 @@ router.post(
         [email, hash]
       );
 
-      req.session.user = { id: user.id, email };
+      req.session.user = {
+        id: user.id,
+        email,
+        role: user.role,
+      };
+
       res.redirect("/");
     } catch (error) {
       if (error.code === "23505") {
@@ -94,12 +98,9 @@ router.post(
 );
 
 // Logout the user
-router.post(
-  "/logout",
-  tryCatch((req, res) => {
-    req.session.destroy();
-    res.redirect("/");
-  })
-);
+router.post("/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
+});
 
 module.exports = router;

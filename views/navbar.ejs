@@ -1,0 +1,64 @@
+<nav class="navbar">
+  <div
+    class="container <%= locals.hasSidebar ? 'container-fluid' : '' %>"
+    style="align-items: center; display: flex; justify-content: space-between"
+  >
+    <% if (locals.hasSidebar) { %>
+    <button
+      aria-label="toggle sidebar"
+      class="btn"
+      id="toggle-sidebar"
+      style="padding: 0"
+      type="button"
+    >
+      <img
+        alt="menu"
+        class="icon"
+        src="/icons/menu.svg"
+        style="height: 1.75rem; width: 1.75rem"
+      />
+    </button>
+    <% } %>
+
+    <a
+      class="link"
+      href="/"
+      style="color: inherit; font-size: 1.5rem; font-weight: bold"
+    >
+      Task Manager
+    </a>
+
+    <div class="dropdown" tabindex="0">
+      <button class="btn" type="button"><%= currentUser.email %></button>
+
+      <div class="dropdown-content">
+        <% if (currentUser.role === "ADMIN") { %>
+        <a class="btn" href="/admin" style="justify-content: left; width: 100%">
+          Admin
+        </a>
+        <% } %>
+        <form action="/logout" method="post">
+          <button
+            class="btn"
+            style="justify-content: left; width: 100%"
+            type="submit"
+          >
+            Logout
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  "use strict";
+
+  // Toggle sidebar
+  document.getElementById("toggle-sidebar")?.addEventListener("click", () => {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("open");
+
+    localStorage.setItem("sidebar-open", sidebar.classList.contains("open"));
+  });
+</script>

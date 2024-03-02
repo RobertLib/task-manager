@@ -1,0 +1,22 @@
+<nav style="display: flex; justify-content: end">
+  <ul style="display: flex; gap: 0.5rem; list-style: none; padding-left: 0">
+    <% if (page > 1) { %>
+    <li>
+      <a
+        class="link"
+        href="<%= req.baseUrl %>?<%= new URLSearchParams({ ...req.query, page: page - 1 }).toString() %>"
+      >
+        Prev
+      </a>
+    </li>
+    <% } %>
+    <li>
+      <a
+        class="link"
+        href="<%= req.baseUrl %>?<%= new URLSearchParams({ ...req.query, page: page + 1 }).toString() %>"
+      >
+        Next
+      </a>
+    </li>
+  </ul>
+</nav>

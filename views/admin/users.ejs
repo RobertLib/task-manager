@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Simple task management" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script defer src="/scripts/restore-scroll.js"></script>
+  </head>
+  <body>
+    <%- include('./sidebar') %> <%- include('../navbar') %>
+
+    <main class="container container-lg">
+      <h1>Admin</h1>
+
+      <h2>Users</h2>
+
+      <div style="overflow: auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <form action="/admin/users" method="get">
+                <th class="action-cell">
+                  <button class="btn btn-default btn-sm" type="submit">
+                    Search
+                  </button>
+                  <button
+                    class="btn btn-default btn-sm"
+                    id="reset-user-filter"
+                    type="reset"
+                  >
+                    Reset
+                  </button>
+                </th>
+                <th>
+                  E-mail
+                  <input
+                    class="form-control form-control-sm"
+                    name="email"
+                    placeholder="Filter by e-mail"
+                    type="text"
+                    value="<%= req.query.email || '' %>"
+                  />
+                </th>
+              </form>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach((user) => { %>
+            <tr>
+              <td class="action-cell">
+                <a
+                  class="btn btn-warning btn-sm"
+                  href="/admin/users?<%= new URLSearchParams({ ...req.query, editId: user.id }) %>"
+                >
+                  Edit
+                </a>
+                <form
+                  action="/admin/users/<%= user.id %>/delete"
+                  method="post"
+                  style="display: inline-block"
+                >
+                  <button
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('Are you sure you want to delete the user?')"
+                  >
+                    Delete
+                  </button>
+                </form>
+
+                <%- include('./user-form-dialog', { user }) %>
+              </td>
+              <td><%= user.email %></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <%- include('./pagination') %>
+
+      <br />
+    </main>
+
+    <script>
+      "use strict";
+
+      // Reset user filter
+      document
+        .getElementById("reset-user-filter")
+        .addEventListener("click", (event) => {
+          event.preventDefault();
+
+          /** @type {HTMLTableRowElement} */
+          const tr = event.target.closest("tr");
+
+          tr.querySelectorAll("input").forEach((input) => {
+            input.value = "";
+          });
+
+          tr.querySelector("form").submit();
+        });
+    </script>
+  </body>
+</html>

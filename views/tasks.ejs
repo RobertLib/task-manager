@@ -4,39 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="description" content="Simple task management" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="view-transition" content="same-origin" />
     <title>Task Manager</title>
     <link rel="stylesheet" href="/style.css" />
     <script defer src="/components/task-item.js"></script>
   </head>
   <body>
-    <nav class="navbar">
-      <div
-        class="container"
-        style="
-          align-items: center;
-          display: flex;
-          justify-content: space-between;
-        "
-      >
-        <h1 style="margin: 0">Task Manager</h1>
-
-        <div class="dropdown" tabindex="0">
-          <button class="btn" type="button"><%= user.email %></button>
-
-          <div class="dropdown-content">
-            <form action="/logout" method="post">
-              <button class="btn" type="submit">Logout</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <%- include('./navbar') %>
 
     <main class="container" style="padding-bottom: 1.5rem; padding-top: 1.5rem">
+      <style>
+        #create-task-form:focus-within input {
+          flex: 1;
+        }
+      </style>
       <form
         action="/"
-        onsubmit="createTask(event)"
+        id="create-task-form"
         style="
           align-items: center;
           display: flex;
@@ -49,6 +32,7 @@
           name="name"
           placeholder="Add a new task"
           required
+          style="transition: flex 0.25s ease-in-out"
           type="text"
         />
         <button class="btn btn-primary" type="submit">Add Task</button>
@@ -70,52 +54,59 @@
           name="<%= task.name %>"
           completed="<%= task.completed %>"
         ></task-item>
-        <% }) %>
+        <% }); %>
       </ul>
     </main>
 
     <script>
-      function createTask(event) {
-        event.preventDefault();
+      "use strict";
 
-        const form = event.target;
-        const formData = new FormData(form);
-        const name = formData.get("name");
-        const input = form.querySelector("input");
-        const submitButton = form.querySelector("button[type=submit]");
+      // Create task
+      document
+        .getElementById("create-task-form")
+        .addEventListener("submit", (event) => {
+          event.preventDefault();
 
-        const timeoutID = setTimeout(() => {
-          submitButton.classList.add("loading");
-        }, 1000);
+          const form = event.target;
+          const formData = new FormData(form);
+          const name = formData.get("name");
+          /** @type {HTMLInputElement} */
+          const input = form.querySelector("input");
+          /** @type {HTMLButtonElement} */
+          const submitButton = form.querySelector("button[type=submit]");
 
-        if (name) {
-          fetch("/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ name }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              const taskItem = document.createElement("task-item");
+          const timeoutID = setTimeout(() => {
+            submitButton.classList.add("loading");
+          }, 1000);
 
-              taskItem.setAttribute("taskId", data.id);
-              taskItem.setAttribute("name", data.name);
-              taskItem.setAttribute("completed", data.completed);
-
-              const taskList = document.getElementById("task-list");
-              taskList.insertBefore(taskItem, taskList.firstChild);
-
-              input.value = "";
+          if (name) {
+            fetch("/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ name }),
             })
-            .catch((error) => console.error(error))
-            .finally(() => {
-              clearTimeout(timeoutID);
-              submitButton.classList.remove("loading");
-            });
-        }
-      }
+              .then((response) => response.json())
+              .then((data) => {
+                const taskItem = document.createElement("task-item");
+
+                taskItem.setAttribute("taskId", data.id);
+                taskItem.setAttribute("name", data.name);
+                taskItem.setAttribute("completed", data.completed);
+
+                const taskList = document.getElementById("task-list");
+                taskList.insertBefore(taskItem, taskList.firstChild);
+
+                input.value = "";
+              })
+              .catch((error) => console.error(error))
+              .finally(() => {
+                clearTimeout(timeoutID);
+                submitButton.classList.remove("loading");
+              });
+          }
+        });
     </script>
   </body>
 </html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Simple task management" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script defer src="/scripts/restore-scroll.js"></script>
+  </head>
+  <body>
+    <%- include('./sidebar') %> <%- include('../navbar') %>
+
+    <main class="container container-lg">
+      <h1>Admin</h1>
+
+      <h2>Tasks</h2>
+
+      <div style="overflow: auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <form action="/admin/tasks" method="get">
+                <th class="action-cell">
+                  <button class="btn btn-default btn-sm" type="submit">
+                    Search
+                  </button>
+                  <button
+                    class="btn btn-default btn-sm"
+                    id="reset-task-filter"
+                    type="reset"
+                  >
+                    Reset
+                  </button>
+                </th>
+                <th>
+                  Name
+                  <input
+                    class="form-control form-control-sm"
+                    name="name"
+                    placeholder="Filter by name"
+                    type="text"
+                    value="<%= req.query.name || '' %>"
+                  />
+                </th>
+                <th>Completed</th>
+              </form>
+            </tr>
+          </thead>
+          <tbody>
+            <% tasks.forEach((task) => { %>
+            <tr>
+              <td class="action-cell">
+                <a
+                  class="btn btn-warning btn-sm"
+                  href="/admin/tasks?<%= new URLSearchParams({ ...req.query, editId: task.id }) %>"
+                >
+                  Edit
+                </a>
+                <form
+                  action="/admin/tasks/<%= task.id %>/delete"
+                  method="post"
+                  style="display: inline-block"
+                >
+                  <button
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('Are you sure you want to delete the task?')"
+                  >
+                    Delete
+                  </button>
+                </form>
+
+                <%- include('./task-form-dialog', { task }) %>
+              </td>
+              <td><%= task.name %></td>
+              <td><%= task.completed %></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <%- include('./pagination') %>
+
+      <br />
+    </main>
+
+    <script>
+      "use strict";
+
+      // Reset task filter
+      document
+        .getElementById("reset-task-filter")
+        .addEventListener("click", (event) => {
+          event.preventDefault();
+
+          /** @type {HTMLTableRowElement} */
+          const tr = event.target.closest("tr");
+
+          tr.querySelectorAll("input").forEach((input) => {
+            input.value = "";
+          });
+
+          tr.querySelector("form").submit();
+        });
+    </script>
+  </body>
+</html>

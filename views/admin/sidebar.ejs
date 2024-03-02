@@ -1,0 +1,53 @@
+<nav class="sidebar" id="sidebar">
+  <ul
+    style="
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      list-style: none;
+      padding-left: 0.5rem;
+    "
+  >
+    <!-- prettier-ignore -->
+    <% [["/admin/tasks", "Tasks"], ["/admin/users", "Users"]].forEach(([path, name]) => { %>
+    <li>
+      <a
+        class="link"
+        href="<%= path %>"
+        style="<%= req.baseUrl === path ? 'text-decoration: underline' : 'color: inherit' %>"
+      >
+        <%= name %>
+      </a>
+    </li>
+    <% }); %>
+  </ul>
+</nav>
+
+<div class="backdrop"></div>
+
+<script>
+  "use strict";
+
+  // Persist the sidebar state across page loads
+  if (["true", null].includes(localStorage.getItem("sidebar-open"))) {
+    document.getElementById("sidebar").classList.add("open");
+  }
+
+  // Close the sidebar when the backdrop is clicked
+  document
+    .querySelector("#sidebar + .backdrop")
+    .addEventListener("click", () => {
+      document.getElementById("sidebar").classList.remove("open");
+      localStorage.setItem("sidebar-open", false);
+    });
+
+  // Close the sidebar when a link is clicked
+  document.querySelectorAll("#sidebar a").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth < 768) {
+        document.getElementById("sidebar").classList.remove("open");
+        localStorage.setItem("sidebar-open", false);
+      }
+    });
+  });
+</script>

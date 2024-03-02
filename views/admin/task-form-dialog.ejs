@@ -1,0 +1,78 @@
+<% if (editId === task.id) { %>
+<dialog class="dialog" id="task-form-dialog">
+  <div style="padding: 1.25rem">
+    <div
+      style="
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 1rem;
+      "
+    >
+      <span style="font-size: 1.3rem; font-weight: bold">Edit Task</span>
+
+      <a
+        class="link"
+        href="/admin/tasks?<%= new URLSearchParams({ ...req.query, editId: '' }) %>"
+        style="line-height: 0"
+      >
+        <img
+          alt="close"
+          class="icon"
+          src="/icons/close.svg"
+          style="height: 1.6rem; width: 1.6rem"
+        />
+      </a>
+    </div>
+
+    <form
+      action="/admin/tasks/<%= editId %>"
+      method="post"
+      style="display: flex; flex-direction: column; gap: 1.25rem"
+    >
+      <label>
+        Name: <span style="color: rgb(var(--danger-rgb))">*</span>
+        <!-- prettier-ignore -->
+        <textarea
+          autofocus
+          class="form-control"
+          maxlength="255"
+          name="name"
+          required
+          rows="4"
+          style="margin-top: 0.5rem; width: 100%"
+        ><%= task.name %></textarea>
+      </label>
+
+      <label style="width: fit-content">
+        Completed: <input <%= task.completed ? "checked" : "" %>
+        name="completed" type="checkbox" value="true" />
+      </label>
+
+      <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+  "use strict";
+
+  // Show the dialog if the editId is present in the URL
+  if (new URLSearchParams(window.location.search).get("editId")) {
+    document.getElementById("task-form-dialog").showModal();
+  }
+
+  // Close the dialog when the user clicks outside of it
+  document
+    .getElementById("task-form-dialog")
+    .addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) {
+        event.currentTarget.close();
+        window.location.search = new URLSearchParams({
+          ...new URLSearchParams(window.location.search),
+          editId: "",
+        });
+      }
+    });
+</script>
+<% } %>

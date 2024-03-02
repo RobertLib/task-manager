@@ -1,0 +1,73 @@
+<% if (editId === user.id) { %>
+<dialog class="dialog" id="user-form-dialog">
+  <div style="padding: 1.25rem">
+    <div
+      style="
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 1rem;
+      "
+    >
+      <span style="font-size: 1.3rem; font-weight: bold">Edit User</span>
+
+      <a
+        class="link"
+        href="/admin/users?<%= new URLSearchParams({ ...req.query, editId: '' }) %>"
+        style="line-height: 0"
+      >
+        <img
+          alt="close"
+          class="icon"
+          src="/icons/close.svg"
+          style="height: 1.6rem; width: 1.6rem"
+        />
+      </a>
+    </div>
+
+    <form
+      action="/admin/users/<%= editId %>"
+      method="post"
+      style="display: flex; flex-direction: column; gap: 1.25rem"
+    >
+      <label>
+        E-mail:
+        <span style="color: rgb(var(--danger-rgb))">*</span>
+        <input
+          autofocus
+          class="form-control"
+          name="email"
+          required
+          style="margin-top: 0.5rem; width: 100%"
+          type="text"
+          value="<%= user.email %>"
+        />
+      </label>
+
+      <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+  "use strict";
+
+  // Show the dialog if the editId is present in the URL
+  if (new URLSearchParams(window.location.search).get("editId")) {
+    document.getElementById("user-form-dialog").showModal();
+  }
+
+  // Close the dialog when the user clicks outside of it
+  document
+    .getElementById("user-form-dialog")
+    .addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) {
+        event.currentTarget.close();
+        window.location.search = new URLSearchParams({
+          ...new URLSearchParams(window.location.search),
+          editId: "",
+        });
+      }
+    });
+</script>
+<% } %>
